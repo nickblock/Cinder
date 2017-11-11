@@ -84,37 +84,58 @@
 
 namespace cinder {
 
-LocationEvent LocationManager::sMostRecentLocation;
+#if defined __OBJC__
+  @class CLLocationManager;
+  @class LocationManagerDelegate;
+#else
+  class CLLocationManager;
+  class LocationManagerDelegate;
+#endif
 
-LocationManager::LocationManager()
-	: mClLocationManager( 0 ), mDelegate( 0 )
+class LocationManagerIOSImpl : LocationManagerImpl {
+
+public: 
+	LocationManagerIOSImpl();
+	~LocationManagerIOSImpl();
+  
+  virtual void            enable( float accuracyInMeters, float distanceFilter, float headingFilter );
+  virtual void            disable();
+  virtual bool            isEnabled() const;         
+  virtual uint32_t        getErrorCountImpl() const; 
+  virtual LocationEvent   getMostRecentLocation();
+
+
+  CLLocationManager* 				mClLocationManager;
+  LocationManagerDelegate*	mDelegate;
+
+  static LocationEvent        sMostRecentLocation;
+  static LocationManagerIOSImpl* sInst;
+};
+
+LocationEvent LocationManagerIOSImpl::sMostRecentLocation;
+LocationManagerIOSImpl* LocationManagerIOSImpl::sInst = nullptr
+
+LocationManagerImpl* LocationManager::get()
 {
+	if( ! LocationManagerIOSImpl::sInst ) {
+		LocationManagerIOSImpl::sInst = new LocationManagerIOSImpl();
+	}
+	
+	return LocationManagerIOSImpl::sInst;
 }
 
-LocationManager::~LocationManager()
-{
+LocationManagerIOSImpl::LocationManagerIOSImpl()
+	: mClLocationManager( 0 ), mDelegate( 0 ) {
+
+}	
+LocationManagerIOSImpl::~LocationManagerIOSImpl() {
+
 	if( mClLocationManager )
 		[mClLocationManager release];
 	if( mDelegate )
 		[mDelegate release];
-}
-
-LocationManager* LocationManager::get()
-{
-	static LocationManager *sInst = 0;
-	if( ! sInst ) {
-		sInst = new LocationManager;
-	}
-	
-	return sInst;
-}
-
-void LocationManager::enable( float accuracyInMeters, float distanceFilter, float headingFilter )
-{
-	get()->enableImpl( accuracyInMeters, distanceFilter, headingFilter );
-}
-
-void LocationManager::enableImpl( float accuracyInMeters, float distanceFilter, float headingFilter )
+}	
+void LocationManagerIOSImpl::enable( float accuracyInMeters, float distanceFilter, float headingFilter )
 {
 	if( ! mClLocationManager ) {
 		mClLocationManager = [[CLLocationManager alloc] init];
@@ -141,12 +162,7 @@ void LocationManager::enableImpl( float accuracyInMeters, float distanceFilter, 
 								   newLocation.altitude, newLocation.horizontalAccuracy, newLocation.verticalAccuracy );
 }
 
-void LocationManager::disable()
-{
-	get()->disableImpl();
-}
-
-void LocationManager::disableImpl()
+void LocationManagerIOSImpl::disable()
 {
 	if( mClLocationManager ) {
 #if defined( CINDER_COCOA_TOUCH )
@@ -156,17 +172,12 @@ void LocationManager::disableImpl()
 	}
 }
 
-bool LocationManager::isEnabled()
-{
-	return get()->isEnabledImpl();
-}
-
-bool LocationManager::isEnabledImpl() const
+bool LocationManagerIOSImpl::isEnabled() const
 {
 	return [CLLocationManager locationServicesEnabled];
 }
 
-uint32_t LocationManager::getErrorCountImpl() const
+uint32_t LocationManagerIOSImpl::getErrorCount() const
 {
 	return mDelegate->mErrorCount;
 }
