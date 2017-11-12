@@ -6,7 +6,7 @@ android {
     compileSdkVersion 21
     buildToolsVersion '26.0.2'
     defaultConfig {
-        applicationId "org.libcinder.samples.locationmanager"
+        applicationId "org.libcinder.sample.locationmanagerapp"
 
         minSdkVersion 19
         targetSdkVersion 21

@@ -92,7 +92,7 @@ namespace cinder {
   class LocationManagerDelegate;
 #endif
 
-class LocationManagerIOSImpl : LocationManagerImpl {
+class LocationManagerIOSImpl : public LocationManagerImpl {
 
 public: 
 	LocationManagerIOSImpl();
@@ -101,7 +101,7 @@ public:
   virtual void            enable( float accuracyInMeters, float distanceFilter, float headingFilter );
   virtual void            disable();
   virtual bool            isEnabled() const;         
-  virtual uint32_t        getErrorCountImpl() const; 
+  virtual uint32_t        getErrorCount() const; 
   virtual LocationEvent   getMostRecentLocation();
 
 

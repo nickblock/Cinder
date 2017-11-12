@@ -31,7 +31,9 @@ namespace cinder {
     
 //! Represents a location event
 class LocationEvent {
-  public:
+
+public:
+
   LocationEvent( const vec2 & coord = vec2(0), float speed = 0, float altitude = 0,
            float horizontalAccuracy = 0, float verticalAccuracy = 0 )
     : mAltitude( altitude ), mCoordinate( coord ), mHorizontalAccuracy( horizontalAccuracy ),
@@ -54,7 +56,8 @@ class LocationEvent {
   //! Returns the vertical accuracy of location event -- invalid when negative
   float     getVerticalAccuracy() const { return mVerticalAccuracy; }
   
-  private:  
+private:
+
   float     mAltitude;
   vec2      mCoordinate;
   float     mSpeed;
@@ -108,7 +111,7 @@ class LocationManagerImpl {
   virtual void            enable( float accuracyInMeters, float distanceFilter, float headingFilter ) = 0;
   virtual void            disable()                                                                   = 0;
   virtual bool            isEnabled() const                                                           = 0;
-  virtual uint32_t        getErrorCountImpl() const                                                   = 0;
+  virtual uint32_t        getErrorCount() const                                                   = 0;
   virtual LocationEvent   getMostRecentLocation()                                                     = 0;
 
   EventSignalLocation     mSignalLocationChanged;
@@ -127,7 +130,7 @@ public:
     get()->disable();
   }
   static bool   isEnabled() {
-    get()->isEnabled();
+    return get()->isEnabled();
   }
   
   static EventSignalLocation& getSignalLocationChanged() { return get()->mSignalLocationChanged; }

@@ -23,12 +23,20 @@
 
 #include "LocationManager.h"
 #include "cinder/Log.h"
-
+#include "cinder/android/JniHelper.h"
 #include "cinder/android/app/CinderNativeActivity.h"
+
+
+#include <android/log.h>
+#define LOGI(...) ((void)__android_log_print(ANDROID_LOG_INFO, "cinder", __VA_ARGS__))
+#define LOGW(...) ((void)__android_log_print(ANDROID_LOG_WARN, "cinder", __VA_ARGS__))
+#define LOGE(...) ((void)__android_log_print(ANDROID_LOG_ERROR,"cinder", __VA_ARGS__))
 
 namespace cinder {
 
-class LocationManagerImplAndroid : LocationManagerImpl {
+using android::JniHelper;
+
+class LocationManagerImplAndroid : public LocationManagerImpl {
 
 public: 
   LocationManagerImplAndroid();
@@ -37,18 +45,36 @@ public:
   virtual void            enable( float accuracyInMeters, float distanceFilter, float headingFilter );
   virtual void            disable();
   virtual bool            isEnabled() const;         
-  virtual uint32_t        getErrorCountImpl() const; 
+  virtual uint32_t        getErrorCount() const; 
   virtual LocationEvent   getMostRecentLocation();
 
   static LocationManagerImplAndroid *sInst;
+
+protected:
+  struct Java {
+    static jclassID   ClassName;
+    static jclass     ClassObject;
+    static jmethodID  enable;
+    static jmethodID  contructCinderLocationManager;
+    static jmethodID  getContext;
+  };
+
+  jobject         mJavaObject = nullptr;
+  LocationEvent   mLocation;
 };
+
+
+jclassID   LocationManagerImplAndroid::Java::ClassName = "org/libcinder/locationmanager/CinderLocationManager";
+jclass     LocationManagerImplAndroid::Java::ClassObject = nullptr;
+jmethodID  LocationManagerImplAndroid::Java::contructCinderLocationManager = nullptr;
+jmethodID  LocationManagerImplAndroid::Java::getContext = nullptr;
 
 LocationManagerImplAndroid* LocationManagerImplAndroid::sInst = nullptr;
 
 LocationManagerImpl* LocationManager::get()
 {
   if( ! LocationManagerImplAndroid::sInst ) {
-    
+
     LocationManagerImplAndroid::sInst = new LocationManagerImplAndroid();
   }
   
@@ -57,6 +83,11 @@ LocationManagerImpl* LocationManager::get()
 
 LocationManagerImplAndroid::LocationManagerImplAndroid()
 {
+  auto jniEnv = JniHelper::Get()->AttachCurrentThread();
+  Java::ClassObject = JniHelper::Get()->RetrieveClass( Java::ClassName );
+
+  Java::contructCinderLocationManager = JniHelper::Get()->GetMethodId( Java::ClassObject, "<init>", "(Landroid/content/Context;)V");
+  Java::getContext =                    JniHelper::Get()->GetMethodId( android::app::CinderNativeActivity::getInstance()->getJavaClass(), "getContext", "()V");
 
 }
 LocationManagerImplAndroid::~LocationManagerImplAndroid()
@@ -67,6 +98,19 @@ LocationManagerImplAndroid::~LocationManagerImplAndroid()
 void LocationManagerImplAndroid::enable( float accuracyInMeters, float distanceFilter, float headingFilter )
 {
   
+  auto jniEnv = JniHelper::Get()->AttachCurrentThread();
+
+  jobject activityContext = jniEnv->CallObjectMethod(android::app::CinderNativeActivity::getInstance()->getJavaObject(), Java::getContext);
+
+  mJavaObject = jniEnv->CallObjectMethod( android::app::CinderNativeActivity::getInstance()->getJavaObject(), Java::contructCinderLocationManager, activityContext );
+
+  if(Java::ClassObject) {
+
+    LOGI( "Retrieved CinderLocationManager jobject" );
+  }
+  else {
+    LOGE("Failed to retrieve CinderLocationManager jobject");
+  }
 }
 
 void LocationManagerImplAndroid::disable()
@@ -74,14 +118,18 @@ void LocationManagerImplAndroid::disable()
   
 }
 
-bool LocationManagerImplAndroid::isEnabled()
+bool LocationManagerImplAndroid::isEnabled() const
 {
-
+  return false;
 }
 
-uint32_t LocationManagerImplAndroid::getErrorCountImpl() const
+uint32_t LocationManagerImplAndroid::getErrorCount() const
 {
+  return 0;
+}
 
+LocationEvent LocationManagerImplAndroid::getMostRecentLocation() {
+  return mLocation;
 }
 
 } // namespace cinder
