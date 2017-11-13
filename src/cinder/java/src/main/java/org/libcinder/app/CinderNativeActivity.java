@@ -24,6 +24,7 @@ import android.view.WindowManager;
 
 import org.libcinder.Cinder;
 import org.libcinder.hardware.Camera;
+import org.libcinder.hardware.CinderLocationManager;
 
 import java.io.File;
 import java.io.InputStream;
@@ -51,6 +52,10 @@ public class CinderNativeActivity extends NativeActivity {
         sInstance = this;
 
         mHandler = new Handler(Looper.getMainLooper());
+
+        if(mUseLocationManager && mLocationManager == null) {
+            mLocationManager = new CinderLocationManager(this);
+        }
 
         Log.i(TAG, "onCreate | -------------- ");
     }
@@ -487,5 +492,16 @@ public class CinderNativeActivity extends NativeActivity {
             Log.e(TAG, "hardware_camera_updateTexImage error:" + e.getMessage());
         }
         */
+    }
+
+    CinderLocationManager mLocationManager;
+    boolean mUseLocationManager = false;
+
+    public void enableLocationManager() {
+
+        mUseLocationManager = true;
+        
+        mLocationManager = new CinderLocationManager(this);
+        Log.i(TAG, "enableLocationManager");
     }
 }
