@@ -35,6 +35,7 @@
 namespace cinder {
 
 using android::JniHelper;
+using android::app::CinderNativeActivity;
 
 class LocationManagerImplAndroid : public LocationManagerImpl {
 
@@ -52,22 +53,14 @@ public:
 
 protected:
   struct Java {
-    static jclassID   ClassName;
-    static jclass     ClassObject;
-    static jmethodID  enable;
-    static jmethodID  contructCinderLocationManager;
-    static jmethodID  getContext;
+    static jmethodID  enableLocationManager;
   };
 
-  jobject         mJavaObject = nullptr;
   LocationEvent   mLocation;
 };
 
 
-jclassID   LocationManagerImplAndroid::Java::ClassName = "org/libcinder/locationmanager/CinderLocationManager";
-jclass     LocationManagerImplAndroid::Java::ClassObject = nullptr;
-jmethodID  LocationManagerImplAndroid::Java::contructCinderLocationManager = nullptr;
-jmethodID  LocationManagerImplAndroid::Java::getContext = nullptr;
+jmethodID  LocationManagerImplAndroid::Java::enableLocationManager = nullptr;
 
 LocationManagerImplAndroid* LocationManagerImplAndroid::sInst = nullptr;
 
@@ -83,12 +76,7 @@ LocationManagerImpl* LocationManager::get()
 
 LocationManagerImplAndroid::LocationManagerImplAndroid()
 {
-  auto jniEnv = JniHelper::Get()->AttachCurrentThread();
-  Java::ClassObject = JniHelper::Get()->RetrieveClass( Java::ClassName );
-
-  Java::contructCinderLocationManager = JniHelper::Get()->GetMethodId( Java::ClassObject, "<init>", "(Landroid/content/Context;)V");
-  Java::getContext =                    JniHelper::Get()->GetMethodId( android::app::CinderNativeActivity::getInstance()->getJavaClass(), "getContext", "()V");
-
+  Java::enableLocationManager = JniHelper::Get()->GetMethodId( CinderNativeActivity::getJavaClass(), "enableLocationManager", "()V");
 }
 LocationManagerImplAndroid::~LocationManagerImplAndroid()
 {
@@ -97,20 +85,9 @@ LocationManagerImplAndroid::~LocationManagerImplAndroid()
 
 void LocationManagerImplAndroid::enable( float accuracyInMeters, float distanceFilter, float headingFilter )
 {
-  
   auto jniEnv = JniHelper::Get()->AttachCurrentThread();
-
-  jobject activityContext = jniEnv->CallObjectMethod(android::app::CinderNativeActivity::getInstance()->getJavaObject(), Java::getContext);
-
-  mJavaObject = jniEnv->CallObjectMethod( android::app::CinderNativeActivity::getInstance()->getJavaObject(), Java::contructCinderLocationManager, activityContext );
-
-  if(Java::ClassObject) {
-
-    LOGI( "Retrieved CinderLocationManager jobject" );
-  }
-  else {
-    LOGE("Failed to retrieve CinderLocationManager jobject");
-  }
+  
+  jniEnv->CallVoidMethod( CinderNativeActivity::getJavaObject(), Java::enableLocationManager);
 }
 
 void LocationManagerImplAndroid::disable()

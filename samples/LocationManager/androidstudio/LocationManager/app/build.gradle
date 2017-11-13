@@ -38,8 +38,7 @@ android {
     }
     sourceSets {
         main {
-            assets.srcDirs = ["${projectDir}/../../../assets"]
-            java.srcDirs = ['src', "${projectDir}/../../../../../blocks/LocationManager/src/cinder"]
+            assets.srcDirs = ["${projectDir}/../../../resources"]
         }
     }
 }
