@@ -111,13 +111,15 @@ class LocationManagerImpl {
   virtual void            enable( float accuracyInMeters, float distanceFilter, float headingFilter ) = 0;
   virtual void            disable()                                                                   = 0;
   virtual bool            isEnabled() const                                                           = 0;
-  virtual uint32_t        getErrorCount() const                                                   = 0;
-  virtual LocationEvent   getMostRecentLocation()                                                     = 0;
+  virtual uint32_t        getErrorCount() const                                                       = 0;
+  virtual LocationEvent   getMostRecentLocation() { return mLocation; }
 
   EventSignalLocation     mSignalLocationChanged;
 #if defined( CINDER_COCOA_TOUCH )
   EventSignalHeading      mSignalHeadingChanged;
 #endif
+
+  LocationEvent   mLocation;
 };
 
 class LocationManager {
@@ -134,7 +136,11 @@ public:
   }
   
   static EventSignalLocation& getSignalLocationChanged() { return get()->mSignalLocationChanged; }
-  static void                 emitLocationChanged( const LocationEvent &event ) { get()->mSignalLocationChanged.emit( event ); }
+  static void                 emitLocationChanged( const LocationEvent &event ) {
+
+   get()->mLocation = event;
+   get()->mSignalLocationChanged.emit( event ); 
+ }
 
 #if defined( CINDER_COCOA_TOUCH )
   static EventSignalHeading&  getSignalHeadingChanged() { return get()->mSignalHeadingChanged; }
