@@ -32,7 +32,7 @@ public class CinderLocationManager {
         .addOnSuccessListener(activity, new OnSuccessListener<Location>() {
             @Override
             public void onSuccess(Location location) {
-                // Got last known location. In some rare situations this can be null.
+              
                 if (location != null) {
                   updateLocation(location);
                 }

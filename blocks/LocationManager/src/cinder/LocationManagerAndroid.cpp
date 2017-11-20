@@ -46,8 +46,7 @@ public:
   virtual void            enable( float accuracyInMeters, float distanceFilter, float headingFilter );
   virtual void            disable();
   virtual bool            isEnabled() const;         
-  virtual uint32_t        getErrorCount() const; 
-  virtual LocationEvent   getMostRecentLocation();
+  virtual uint32_t        getErrorCount() const;
 
   static LocationManagerImplAndroid *sInst;
 
@@ -56,7 +55,6 @@ protected:
     static jmethodID  enableLocationManager;
   };
 
-  LocationEvent   mLocation;
 };
 
 
@@ -97,7 +95,7 @@ void LocationManagerImplAndroid::disable()
 
 bool LocationManagerImplAndroid::isEnabled() const
 {
-  return false;
+  return true;
 }
 
 uint32_t LocationManagerImplAndroid::getErrorCount() const
@@ -105,9 +103,6 @@ uint32_t LocationManagerImplAndroid::getErrorCount() const
   return 0;
 }
 
-LocationEvent LocationManagerImplAndroid::getMostRecentLocation() {
-  return mLocation;
-}
 
 } // namespace cinder
 
@@ -118,6 +113,13 @@ extern "C" {
 JNIEXPORT void JNICALL Java_org_libcinder_hardware_CinderLocationManager_updateLocation(JNIEnv* env, jobject obj, jdouble lon, jdouble lat, jdouble bearing, jdouble altitude)
 {
   LOGI("LocationManagerNative Update lon=%2.2f lat=%2.2f\n", lon, lat);
+
+  cinder::LocationManager::emitLocationChanged(cinder::LocationEvent(
+      glm::vec2(lat,lon),
+      0.0f,
+      (float)altitude,
+      0.0f, 0.0f
+    ));
 }
 
 
