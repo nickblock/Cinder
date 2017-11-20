@@ -110,3 +110,17 @@ LocationEvent LocationManagerImplAndroid::getMostRecentLocation() {
 }
 
 } // namespace cinder
+
+#ifdef __cplusplus
+extern "C" {
+#endif
+
+JNIEXPORT void JNICALL Java_org_libcinder_hardware_CinderLocationManager_updateLocation(JNIEnv* env, jobject obj, jdouble lon, jdouble lat, jdouble bearing, jdouble altitude)
+{
+  LOGI("LocationManagerNative Update lon=%2.2f lat=%2.2f\n", lon, lat);
+}
+
+
+#ifdef __cplusplus
+}
+#endif

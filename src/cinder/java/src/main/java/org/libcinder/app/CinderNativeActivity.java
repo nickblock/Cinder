@@ -53,9 +53,11 @@ public class CinderNativeActivity extends NativeActivity {
 
         mHandler = new Handler(Looper.getMainLooper());
 
-        if(mUseLocationManager && mLocationManager == null) {
+        if(mUseLocationManager) {
+
             mLocationManager = new CinderLocationManager(this);
         }
+
 
         Log.i(TAG, "onCreate | -------------- ");
     }
@@ -500,8 +502,5 @@ public class CinderNativeActivity extends NativeActivity {
     public void enableLocationManager() {
 
         mUseLocationManager = true;
-        
-        mLocationManager = new CinderLocationManager(this);
-        Log.i(TAG, "enableLocationManager");
     }
 }

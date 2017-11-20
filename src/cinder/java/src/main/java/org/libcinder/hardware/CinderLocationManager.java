@@ -1,6 +1,7 @@
 package org.libcinder.hardware;
 
 import android.location.LocationManager;
+import android.location.LocationListener;
 import android.location.Location;
 import android.content.Context;
 import android.os.Bundle;
@@ -16,76 +17,64 @@ public class CinderLocationManager {
   private static final int LOCATION_INTERVAL = 0;
   private static final float LOCATION_DISTANCE = 0.0f;
   private LocationManager mLocationManager = null;
-
-  private class LocationListener implements android.location.LocationListener
-  {
-      Location mLastLocation;
-
-      public LocationListener(String provider)
-      {
-          Log.i(TAG, "LocationListener " + provider);
-          mLastLocation = new Location(provider);
-      }
-
-      @Override
-      public void onLocationChanged(Location location)
-      {
-          Log.i(TAG, "onLocationChanged: " + location);
-          mLastLocation.set(location);
-      }
-
-      @Override
-      public void onProviderDisabled(String provider)
-      {
-          Log.i(TAG, "onProviderDisabled: " + provider);
-      }
-
-      @Override
-      public void onProviderEnabled(String provider)
-      {
-          Log.i(TAG, "onProviderEnabled: " + provider);
-      }
-
-      @Override
-      public void onStatusChanged(String provider, int status, Bundle extras)
-      {
-          Log.i(TAG, "onStatusChanged: " + provider);
-      }
-  }
-
-  LocationListener[] mLocationListeners;
+  private Location mLastLocation = null;
+  private long mNativePtr = 0;
 
   public CinderLocationManager(Context activityContext) {
       
-      mLocationListeners = new LocationListener[] {
-              new LocationListener(LocationManager.GPS_PROVIDER),
-              new LocationListener(LocationManager.NETWORK_PROVIDER)
-      };
+      Log.i(TAG, "Construct");
       
       mLocationManager = (LocationManager) activityContext.getSystemService(Context.LOCATION_SERVICE);
-      
-//      try {
-//        mLocationManager.requestLocationUpdates(
-//          LocationManager.NETWORK_PROVIDER, LOCATION_INTERVAL, LOCATION_DISTANCE,
-//          mLocationListeners[1]
-//        );
-//      } catch (java.lang.SecurityException ex) {
-//        Log.i(TAG, "fail to request location update, ignore", ex);
-//      } catch (IllegalArgumentException ex) {
-//        Log.d(TAG, "network provider does not exist, " + ex.getMessage());
-//      }
-      try {
-        mLocationManager.requestLocationUpdates(
-          LocationManager.GPS_PROVIDER, LOCATION_INTERVAL, LOCATION_DISTANCE,
-          mLocationListeners[0]
-        );
-      } catch (java.lang.SecurityException ex) {
-        Log.i(TAG, "fail to request location update, ignore", ex);
-      } catch (IllegalArgumentException ex) {
-        Log.d(TAG, "gps provider does not exist " + ex.getMessage());
+      mLastLocation = new Location(Context.LOCATION_SERVICE);
+
+      mLastLocation = mLocationManager.getLastKnownLocation(Context.LOCATION_SERVICE);
+
+      LocationListener locationListener = new LocationListener() {
+        public void onLocationChanged(Location location) {
+
+          Log.i(TAG, "onLocationChanged: " + location);
+          mLastLocation.set(location);
+          updateLocation(mLastLocation);
+        }
+
+        public void onStatusChanged(String provider, int status, Bundle extras) {
+
+          Log.i(TAG, "onStatusChanged: " + provider);
+        }
+
+        public void onProviderEnabled(String provider) {
+
+          Log.i(TAG, "onProviderEnabled: " + provider);
+        }
+
+        public void onProviderDisabled(String provider) {
+          
+          Log.i(TAG, "onProviderDisabled: " + provider);
+        }
+      };
+
+      mLocationManager.requestLocationUpdates(
+        LocationManager.GPS_PROVIDER, 
+        LOCATION_INTERVAL, 
+        LOCATION_DISTANCE,
+        locationListener
+      );
+
+      if(mLastLocation != null) {
+
+        updateLocation(mLastLocation);
       }
-
-      Log.i(TAG, "Construct");
-
   }
+
+  private void updateLocation(Location location) {
+    
+    updateLocation(
+      location.getLongitude(),
+      location.getLatitude(),
+      location.getBearing(),
+      location.getAltitude()
+    );
+  }
+
+  private native void updateLocation(double lon, double lat, double bearing, double altitude);
 }
