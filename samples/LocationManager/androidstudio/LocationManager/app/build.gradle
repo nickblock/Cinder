@@ -53,6 +53,7 @@ repositories {
 
 dependencies {
     compile 'com.android.support:appcompat-v7:21.0.0'
+    compile "com.google.android.gms:play-services-location:11.0.1"
     debugCompile 'org.libcinder:libcinder-debug:1.0@aar'
     releaseCompile 'org.libcinder:libcinder-release:1.0@aar'
 }
