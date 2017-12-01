@@ -1,5 +1,6 @@
 package org.libcinder.hardware;
 
+import android.Manifest;
 import android.app.Activity;
 import android.graphics.ImageFormat;
 import android.graphics.Matrix;
@@ -98,8 +99,9 @@ public abstract class Camera {
      *
      */
     public static Camera create(int apiLevel, CinderNativeActivity activity) {
+
         Camera result = null;
-        if (apiLevel >= Build.VERSION_CODES.LOLLIPOP) {
+        if (false && apiLevel >= Build.VERSION_CODES.LOLLIPOP) {
             result = new CameraV2(activity);
         } else {
             result = new CameraV1(activity);

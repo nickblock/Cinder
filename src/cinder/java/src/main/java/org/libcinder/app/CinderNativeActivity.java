@@ -1,6 +1,7 @@
 package org.libcinder.app;
 
 import android.Manifest;
+import android.app.Activity;
 import android.app.NativeActivity;
 import android.app.WallpaperManager;
 import android.content.ActivityNotFoundException;
@@ -12,6 +13,7 @@ import android.graphics.BitmapFactory;
 import android.graphics.Point;
 import android.graphics.SurfaceTexture;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.ConditionVariable;
 import android.os.Environment;
@@ -21,17 +23,24 @@ import android.util.Log;
 import android.view.Display;
 import android.view.View;
 import android.view.WindowManager;
+import android.support.v4.content.ContextCompat;
+import android.support.v4.app.ActivityCompat;
 
 import org.libcinder.Cinder;
 import org.libcinder.hardware.Camera;
 import org.libcinder.hardware.CinderLocationManager;
 
 import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.HashMap;
 import java.io.InputStream;
 import java.net.URLDecoder;
 import java.security.spec.ECField;
 
-public class CinderNativeActivity extends NativeActivity {
+public class CinderNativeActivity extends NativeActivity
+        implements ActivityCompat.OnRequestPermissionsResultCallback {
 
     private static final String TAG = "CinderNativeActivity";
 
@@ -46,9 +55,19 @@ public class CinderNativeActivity extends NativeActivity {
         return sInstance;
     }
 
+    private class CameraConfig {
+        public boolean init = false;
+        public boolean start = false;
+        public int width = 0;
+        public int height = 0;
+        public String deviceId;
+    } 
+    CameraConfig mCameraConfig = new CameraConfig();
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
         sInstance = this;
 
         mHandler = new Handler(Looper.getMainLooper());
@@ -58,6 +77,7 @@ public class CinderNativeActivity extends NativeActivity {
             mLocationManager = new CinderLocationManager(this);
         }
 
+        mPermissions.doRequestPermissions();
 
         Log.i(TAG, "onCreate | -------------- ");
     }
@@ -128,18 +148,50 @@ public class CinderNativeActivity extends NativeActivity {
      */
     public class Permissions {
 
-        /** \class Missing
-         *
-         */
+        ArrayList<String> mDesiredPermissions = new ArrayList<String>();
+
+        CinderNativeActivity mActivity = null;
+        int mRequestCode = 0;
+        
+        public Permissions(CinderNativeActivity a) {
+
+            mActivity = a;
+        }
+
+
+        public boolean get(String permission) {
+
+            if (checkCallingOrSelfPermission(
+                        permission) != PackageManager.PERMISSION_GRANTED) {
+
+                mDesiredPermissions.add(permission);
+
+                return false;
+            }
+
+            return true;
+        }
+
+        public void doRequestPermissions() {
+
+            if(mDesiredPermissions.size() >  0) {
+
+                ActivityCompat.requestPermissions(mActivity, mDesiredPermissions.toArray(new String[0]), mRequestCode);
+
+                mDesiredPermissions.clear();
+            }
+        }
+
         public class Missing {
 
-            private String msg(String ident) {
-                return "Permission denied (maybe missing " + ident + " permission)";
+            private String msg(String permission) {
+                return "Permission denied (maybe missing " + permission + " permission)";
             }
 
             public String CAMERA()                  { return msg(Manifest.permission.CAMERA); }
             public String INTERNET()                { return msg(Manifest.permission.INTERNET); }
             public String WRITE_EXTERNAL_STORAGE()  { return msg(Manifest.permission.WRITE_EXTERNAL_STORAGE); }
+            public String LOCATION()                { return msg(Manifest.permission.ACCESS_FINE_LOCATION); }
         }
 
         private Missing mMissing = new Missing();
@@ -155,13 +207,34 @@ public class CinderNativeActivity extends NativeActivity {
         public boolean CAMERA()                 { return check(Manifest.permission.CAMERA); }
         public boolean INTERNET()               { return check(Manifest.permission.INTERNET); }
         public boolean WRITE_EXTERNAL_STORAGE() { return check(Manifest.permission.WRITE_EXTERNAL_STORAGE); }
+        public boolean LOCATION()               { return check(Manifest.permission.ACCESS_FINE_LOCATION); }
 
     }
 
-    private Permissions mPermssions = new Permissions();
+    protected Permissions mPermissions = new Permissions(this);
 
-    public static Permissions permissions() {
-        return sInstance.mPermssions;
+    static public Permissions permissions() {
+        return sInstance.mPermissions;
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, String[] permissions,
+                                           int[] grantResults) {
+
+        for(int i=0; i<grantResults.length; i++) {
+
+            if(grantResults[i] == PackageManager.PERMISSION_GRANTED) {
+
+                if(permissions[i].equals(Manifest.permission.CAMERA)) {
+
+                    do_hardware_camera_initialize(Build.VERSION.SDK_INT);
+                }
+                else if(permissions[i].equals(Manifest.permission.ACCESS_FINE_LOCATION)) {
+
+                    mLocationManager = new CinderLocationManager(this);
+                }
+            }
+        }
     }
 
     // =============================================================================================
@@ -289,28 +362,44 @@ public class CinderNativeActivity extends NativeActivity {
     public void hardware_camera_initialize(final int apiLevel) {
         Log.i(TAG, "hardware_camera_initialize");
 
+        if(permissions().get(Manifest.permission.CAMERA)) {
+
+            do_hardware_camera_initialize(apiLevel);
+        }
+
+    }
+
+    private void do_hardware_camera_initialize(final int apiLevel) {
+
         if(null != mCamera) {
             return;
         }
 
-        if(1 != Thread.currentThread().getId()) {
-            final ConditionVariable condition = new ConditionVariable(false);
-            final CinderNativeActivity activity = this;
-            mHandler.post(new Runnable() {
-                @Override
-                public void run() {
-                    //mCamera = Camera.create(Build.VERSION_CODES.KITKAT, activity);
-                    mCamera = Camera.create(apiLevel, activity);
-                    mCamera.initialize();
-                    condition.open();
-                }
-            });
-            condition.block();
-        }
-        else {
+        if(1 != Thread.currentThread().getId()) { 
+            final ConditionVariable condition = new ConditionVariable(false); 
+            final CinderNativeActivity activity = this; 
+            mHandler.post(new Runnable() { 
+                @Override 
+                public void run() { 
+                    //mCamera = Camera.create(Build.VERSION_CODES.KITKAT, activity); 
+                    mCamera = Camera.create(apiLevel, activity); 
+                    mCamera.initialize(); 
+                    condition.open(); 
+                } 
+            }); 
+            condition.block(); 
+        } 
+        else { 
+            
             mCamera = Camera.create(apiLevel, this);
-        }
+
+            if(mCameraConfig.start) {
+                do_hardware_camera_startCapture(mCameraConfig.deviceId, mCameraConfig.width, mCameraConfig.height);
+            }
+        } 
+        
     }
+
 
     /**
      * hardware_camera_enumerateDevices
@@ -333,7 +422,7 @@ public class CinderNativeActivity extends NativeActivity {
      * hardware_camera_startCapture
      *
      */
-    public void hardware_camera_startCapture(final String deviceId, final int width, final int height) {
+    public void do_hardware_camera_startCapture(final String deviceId, final int width, final int height) {
     //public void hardware_camera_startCapture() {
         Log.i(TAG, "hardware_camera_startCapture");
 
@@ -358,6 +447,20 @@ public class CinderNativeActivity extends NativeActivity {
             mCamera.startCapture(deviceId, width, height);
         }
     }
+
+    private void hardware_camera_startCapture(final String deviceId, final int width, final int height) {
+
+        if(mPermissions.get(Manifest.permission.CAMERA)) {
+            do_hardware_camera_startCapture(deviceId, width, height);
+        }
+        else {
+            mCameraConfig.deviceId = deviceId;
+            mCameraConfig.width = width;
+            mCameraConfig.height = height;
+            mCameraConfig.start = true;
+        }
+    }
+
 
     /**
      * hardware_camera_stopCapture
@@ -501,6 +604,9 @@ public class CinderNativeActivity extends NativeActivity {
 
     public void enableLocationManager() {
 
-        mUseLocationManager = true;
+        if(mPermissions.get(Manifest.permission.ACCESS_FINE_LOCATION)) {
+            mUseLocationManager = true;
+        }
+
     }
 }
