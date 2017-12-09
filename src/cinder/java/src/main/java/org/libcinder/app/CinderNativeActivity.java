@@ -105,6 +105,10 @@ public class CinderNativeActivity extends NativeActivity
     protected void onResume() {
         super.onResume();
 
+        if(mUseLocationManager && mLocationManager != null) {
+            mLocationManager.startLocationUpdates();
+        }
+
         Log.i(TAG, "onResume | -------------- ");
     }
 
