@@ -115,7 +115,7 @@ JNIEXPORT void JNICALL Java_org_libcinder_hardware_CinderLocationManager_updateL
   LOGI("LocationManagerNative Update lon=%2.2f lat=%2.2f\n", lon, lat);
 
   cinder::LocationManager::emitLocationChanged(cinder::LocationEvent(
-      glm::vec2(lat,lon),
+      lon, lat,
       0.0f,
       (float)altitude,
       0.0f, 0.0f

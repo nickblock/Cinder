@@ -65,7 +65,7 @@
 	if( newLocation.horizontalAccuracy < 0 )
 		return; // not enough accuracy
 
-	*mMostRecentLocationPtr = cinder::LocationEvent( cinder::vec2( newLocation.coordinate.latitude, newLocation.coordinate.longitude ), newLocation.speed,
+	*mMostRecentLocationPtr = cinder::LocationEvent( newLocation.coordinate.longitude, newLocation.coordinate.latitude , newLocation.speed,
 								   newLocation.altitude, newLocation.horizontalAccuracy, newLocation.verticalAccuracy );
 
 	mMgr->emitLocationChanged( *mMostRecentLocationPtr );
@@ -158,7 +158,7 @@ void LocationManagerIOSImpl::enable( float accuracyInMeters, float distanceFilte
 #endif
 	[mClLocationManager startUpdatingLocation];
 	CLLocation *newLocation = mClLocationManager.location;	
-	sMostRecentLocation = LocationEvent( vec2( newLocation.coordinate.latitude, newLocation.coordinate.longitude ), newLocation.speed,
+	sMostRecentLocation = LocationEvent( newLocation.coordinate.longitude, newLocation.coordinate.latitude, newLocation.speed,
 								   newLocation.altitude, newLocation.horizontalAccuracy, newLocation.verticalAccuracy );
 }
 

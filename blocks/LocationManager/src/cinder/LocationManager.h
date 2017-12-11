@@ -34,21 +34,19 @@ class LocationEvent {
 
 public:
 
-  LocationEvent( const vec2 & coord = vec2(0), float speed = 0, float altitude = 0,
+  LocationEvent( double lon = 0.f, double lat = 0.f, float speed = 0, float altitude = 0,
            float horizontalAccuracy = 0, float verticalAccuracy = 0 )
-    : mAltitude( altitude ), mCoordinate( coord ), mHorizontalAccuracy( horizontalAccuracy ),
+    : mAltitude( altitude ), mLongitude(lon), mLatitude(lat), mHorizontalAccuracy( horizontalAccuracy ),
       mSpeed( speed ), mVerticalAccuracy( verticalAccuracy )
   {
   }
   
   //! Returns the altitude in meters of the location event
   float     getAltitude() const { return mAltitude; }
-  //! Returns the coordinate of the location event as a Vec2f where x is latitude and y is longitude
-  vec2      getCoordinate() const { return mCoordinate; }
   //! Returns the latitude coordinate of the location event
-  float     getLatitude() const { return mCoordinate.x; }
+  float     getLatitude() const { return mLatitude; }
   //! Returns the latitude coordinate of the location event
-  float     getLongitude() const { return mCoordinate.y; }
+  float     getLongitude() const { return mLongitude; }
   //! Returns speed in meters of location event
   float     getSpeed() const { return mSpeed; }
   //! Returns the horizontal accuracy of location event -- invalid when negative
@@ -59,7 +57,8 @@ public:
 private:
 
   float     mAltitude;
-  vec2      mCoordinate;
+  double    mLatitude;
+  double    mLongitude;
   float     mSpeed;
   float     mVerticalAccuracy;
   float     mHorizontalAccuracy;
