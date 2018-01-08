@@ -177,8 +177,7 @@ fs::path PlatformAndroid::getHomeDirectory() const
 
 fs::path PlatformAndroid::getDocumentsDirectory() const
 {
-	/// @TODO: IMPLEMENT!!!
-	return fs::path();
+	return cinder::android::app::CinderNativeActivity::getDocumentsDirectory();
 }
 
 fs::path PlatformAndroid::getDefaultExecutablePath() const

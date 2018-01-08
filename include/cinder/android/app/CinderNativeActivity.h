@@ -49,6 +49,7 @@ public:
 
 	static cinder::fs::path 		getCacheDirectory();
 	static cinder::fs::path			getPicturesDirectory();
+	static cinder::fs::path			getDocumentsDirectory();
 	static void 					setWallpaper( const Surface8u& surf );
 	static int 						getDisplayRotation();
 	static void 					setKeepScreenOn( bool keepScreenOn );
@@ -65,6 +66,7 @@ private:
 		static jclass 		ClassObject;
 		static jmethodID 	getCacheDirectory;
 		static jmethodID	getPicturesDirectory;
+		static jmethodID	getDocumentsDirectory;
 		static jmethodID 	setWallpaper;
 		static jmethodID 	getDisplayRotation;
 		static jmethodID 	setKeepScreenOn;
