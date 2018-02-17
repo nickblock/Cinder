@@ -120,6 +120,8 @@ JNIEXPORT void JNICALL Java_org_libcinder_hardware_CinderLocationManager_updateL
       (float)altitude,
       0.0f, 0.0f
     ));
+
+  cinder::LocationManager::emitHeadingChanged(cinder::HeadingEvent( bearing ));
 }
 
 

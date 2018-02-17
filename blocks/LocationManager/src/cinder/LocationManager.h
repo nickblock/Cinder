@@ -67,7 +67,6 @@ private:
 typedef signals::Signal<void (const LocationEvent&)>  EventSignalLocation;
 
 
-#if defined( CINDER_COCOA_TOUCH )
 //! Represents a heading event
 class HeadingEvent {
   public: 
@@ -99,8 +98,6 @@ class HeadingEvent {
 
 typedef signals::Signal<void (const HeadingEvent&)>   EventSignalHeading;
 
-#endif
-
 class LocationManagerImpl {
 
   public:
@@ -114,9 +111,7 @@ class LocationManagerImpl {
   virtual LocationEvent   getMostRecentLocation() { return mLocation; }
 
   EventSignalLocation     mSignalLocationChanged;
-#if defined( CINDER_COCOA_TOUCH )
   EventSignalHeading      mSignalHeadingChanged;
-#endif
 
   LocationEvent   mLocation;
 };
@@ -141,10 +136,8 @@ public:
    get()->mSignalLocationChanged.emit( event ); 
  }
 
-#if defined( CINDER_COCOA_TOUCH )
   static EventSignalHeading&  getSignalHeadingChanged() { return get()->mSignalHeadingChanged; }
   static void                 emitHeadingChanged( const HeadingEvent &event ) { get()->mSignalHeadingChanged.emit( event ); }
-#endif
 
   static LocationEvent        getMostRecentLocation() { return get()->getMostRecentLocation(); }
 
