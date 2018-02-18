@@ -56,6 +56,7 @@ public:
 	static void 					setFullScreen( bool fullScreen );
 	static void 					launchWebBrowser( const Url &url );
 	static void 					launchTwitter( const std::string& text = "", const Surface8u* surf = nullptr );
+	static bool						havePermission(const std::string& permission);
 
 private:
 	static void 			cacheJni();
@@ -73,6 +74,7 @@ private:
 		static jmethodID 	setFullScreen;
 		static jmethodID 	launchWebBrowser;
 		static jmethodID 	launchTwitter;
+		static jmethodID 	havePermission;
 	};
 
 	static std::unique_ptr<CinderNativeActivity> sInstance;

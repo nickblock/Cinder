@@ -48,6 +48,7 @@ jmethodID 	CinderNativeActivity::Java::setKeepScreenOn			= nullptr;
 jmethodID 	CinderNativeActivity::Java::setFullScreen			= nullptr;
 jmethodID 	CinderNativeActivity::Java::launchWebBrowser		= nullptr;
 jmethodID 	CinderNativeActivity::Java::launchTwitter			= nullptr;
+jmethodID 	CinderNativeActivity::Java::havePermission    = nullptr;
 
 std::unique_ptr<CinderNativeActivity> CinderNativeActivity::sInstance;
 
@@ -87,6 +88,7 @@ dbg_app_fn_enter( __PRETTY_FUNCTION__ );
 				Java::setFullScreen			= JniHelper::Get()->GetMethodId( Java::ClassObject, "setFullScreen", "(Z)V" );
 				Java::launchWebBrowser		= JniHelper::Get()->GetMethodId( Java::ClassObject, "launchWebBrowser", "(Ljava/lang/String;)V" );
 				Java::launchTwitter			= JniHelper::Get()->GetMethodId( Java::ClassObject, "launchTwitter", "(Ljava/lang/String;Ljava/lang/String;)V" );
+				Java::havePermission    = JniHelper::Get()->GetMethodId( Java::ClassObject, "havePermission", "(Ljava/lang/String;)Z" );
 				jni_obtained_check( CinderNativeActivity::Java::getCacheDirectory );
 				jni_obtained_check( CinderNativeActivity::Java::getPicturesDirectory );
 				jni_obtained_check( CinderNativeActivity::Java::getDocumentsDirectory );
@@ -280,5 +282,11 @@ void CinderNativeActivity::launchTwitter( const std::string& text, const Surface
 	JniHelper::Get()->DeleteLocalRef( jstrPath );
 }
 
+bool CinderNativeActivity::havePermission( const std::string& permission)
+{
+	jstring jstrText = JniHelper::Get()->NewStringUTF( permission );
+
+	return JniHelper::Get()->CallBooleanMethod( getInstance()->getJavaObject(), Java::havePermission, jstrText );
+}
 
 }}} // namespace cinder::android::app

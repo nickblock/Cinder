@@ -23,6 +23,8 @@
 #include "cinder/CaptureImplJni.h"
 #include "cinder/android/hardware/Camera.h"
 #include "cinder/android/AndroidDevLog.h"
+#include "cinder/android/app/CinderNativeActivity.h"
+
 using namespace ci::android;
 
 #include "cinder/app/App.h"
@@ -87,7 +89,7 @@ CaptureImplJni::Device::~Device()
 
 bool CaptureImplJni::Device::checkAvailable() const
 {
-	return false;
+	return cinder::android::app::CinderNativeActivity::getInstance()->havePermission("android.permission.CAMERA");
 }
 
 bool CaptureImplJni::Device::isConnected() const

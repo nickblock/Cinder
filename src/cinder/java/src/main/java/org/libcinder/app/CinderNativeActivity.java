@@ -241,6 +241,10 @@ public class CinderNativeActivity extends NativeActivity
         }
     }
 
+    public boolean havePermission(String permission) {
+        
+        return mPermissions.get(permission);
+    }
     // =============================================================================================
     // Misc
     // =============================================================================================
