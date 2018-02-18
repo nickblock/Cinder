@@ -77,8 +77,6 @@ public class CinderNativeActivity extends NativeActivity
             mLocationManager = new CinderLocationManager(this);
         }
 
-        mPermissions.doRequestPermissions();
-
         Log.i(TAG, "onCreate | -------------- ");
     }
 
@@ -94,6 +92,7 @@ public class CinderNativeActivity extends NativeActivity
         super.onStart();
 
         Log.i(TAG, "onStart | -------------- ");
+        
 
 //        if( mKeepScreenOn ) {
 //            getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
@@ -231,7 +230,7 @@ public class CinderNativeActivity extends NativeActivity
 
                 if(permissions[i].equals(Manifest.permission.CAMERA)) {
 
-                    do_hardware_camera_initialize(Build.VERSION.SDK_INT);
+                    // do_hardware_camera_initialize(Build.VERSION.SDK_INT);
                 }
                 else if(permissions[i].equals(Manifest.permission.ACCESS_FINE_LOCATION)) {
 
@@ -245,6 +244,16 @@ public class CinderNativeActivity extends NativeActivity
         
         return mPermissions.get(permission);
     }
+
+    public void getPermissions() {
+        
+        new Thread(new Runnable() {
+            public void run() {
+                mPermissions.doRequestPermissions();
+            }
+        }).start();
+    }
+
     // =============================================================================================
     // Misc
     // =============================================================================================

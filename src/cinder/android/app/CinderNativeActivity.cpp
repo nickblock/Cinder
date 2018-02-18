@@ -49,6 +49,7 @@ jmethodID 	CinderNativeActivity::Java::setFullScreen			= nullptr;
 jmethodID 	CinderNativeActivity::Java::launchWebBrowser		= nullptr;
 jmethodID 	CinderNativeActivity::Java::launchTwitter			= nullptr;
 jmethodID 	CinderNativeActivity::Java::havePermission    = nullptr;
+jmethodID 	CinderNativeActivity::Java::getPermissions    = nullptr;
 
 std::unique_ptr<CinderNativeActivity> CinderNativeActivity::sInstance;
 
@@ -89,6 +90,7 @@ dbg_app_fn_enter( __PRETTY_FUNCTION__ );
 				Java::launchWebBrowser		= JniHelper::Get()->GetMethodId( Java::ClassObject, "launchWebBrowser", "(Ljava/lang/String;)V" );
 				Java::launchTwitter			= JniHelper::Get()->GetMethodId( Java::ClassObject, "launchTwitter", "(Ljava/lang/String;Ljava/lang/String;)V" );
 				Java::havePermission    = JniHelper::Get()->GetMethodId( Java::ClassObject, "havePermission", "(Ljava/lang/String;)Z" );
+				Java::getPermissions    = JniHelper::Get()->GetMethodId( Java::ClassObject, "getPermissions", "()V" );
 				jni_obtained_check( CinderNativeActivity::Java::getCacheDirectory );
 				jni_obtained_check( CinderNativeActivity::Java::getPicturesDirectory );
 				jni_obtained_check( CinderNativeActivity::Java::getDocumentsDirectory );
@@ -288,5 +290,8 @@ bool CinderNativeActivity::havePermission( const std::string& permission)
 
 	return JniHelper::Get()->CallBooleanMethod( getInstance()->getJavaObject(), Java::havePermission, jstrText );
 }
-
+void CinderNativeActivity::getPermissions()
+{
+	JniHelper::Get()->CallVoidMethod( getInstance()->getJavaObject(), Java::getPermissions );
+}
 }}} // namespace cinder::android::app
