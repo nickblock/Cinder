@@ -294,13 +294,6 @@ void EventManagerAndroid::appLostFocus()
 {
 	mFocused = false;
 
-	// Disable sensors
-	disableAccelerometer();
-	disableMagneticField();
-	disableGyroscope();
-	disableGravity();
-	disableRotationVector();
-
 	if( mActivityLostFocusCallbackFn ) {
 		mActivityLostFocusCallbackFn();
 	}	
@@ -310,28 +303,7 @@ void EventManagerAndroid::appGainedFocus()
 {
 	mFocused = true;
 
-	// Renable sensors if they were requested
-	{
-		if( mAccelerometerSensor && mAccelerometerSensor->mRequested ) {
-			enableAccelerometer();
-		}
-
-		if( mMagneticFieldSensor && mMagneticFieldSensor->mRequested ) {
-			enableMagneticField();
-		}
-
-		if( mGyroscopeSensor && mGyroscopeSensor->mRequested ) {
-			enableGyroscope();
-		}
-
-		if( mGravitySensor && mGravitySensor->mRequested ) {
-			enableGravity();
-		}
-
-		if( mRotationVectorSensor && mRotationVectorSensor->mRequested ) {
-			enableRotationVector();
-		}
-	}
+	// }
 
 	if( mActivityGainedFocusCallbackFn ) {
 		mActivityGainedFocusCallbackFn();
