@@ -640,7 +640,7 @@ void EventManagerAndroid::execute()
 	mLightSensor->mSensor         	= ASensorManager_getDefaultSensor( mSensorManager, ASENSOR_TYPE_LIGHT );
 	mProximitySensor->mSensor     	= ASensorManager_getDefaultSensor( mSensorManager, ASENSOR_TYPE_PROXIMITY );
 	mGravitySensor->mSensor     	= ASensorManager_getDefaultSensor( mSensorManager, ASENSOR_TYPE_GRAVITY );
-	mRotationVectorSensor->mSensor 	= ASensorManager_getDefaultSensor( mSensorManager, ASENSOR_TYPE_ROTATION_VECTOR );
+	mRotationVectorSensor->mSensor 	= ASensorManager_getDefaultSensor( mSensorManager, ASENSOR_TYPE_GAME_ROTATION_VECTOR );
 	if( nullptr == mRotationVectorSensor->mSensor ) {
 		mRotationVectorSensor->mSensor = ASensorManager_getDefaultSensor( mSensorManager, ASENSOR_TYPE_ROTATION_VECTOR );
 		mHasGameRotationVector = false;
