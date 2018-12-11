@@ -47,7 +47,7 @@
         #include <gst/gl/x11/gstgldisplay_x11.h>
     #endif
 
-    #define CINDER_GST_HAS_GL
+    // #define CINDER_GST_HAS_GL
 #endif
 
 #define CINDER_USE_PLAYBIN
