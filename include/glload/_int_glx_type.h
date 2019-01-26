@@ -90,23 +90,23 @@ typedef unsigned __int64 uint64_t;
 	typedef XID GLXVideoSourceSGIX;
 	typedef struct __GLXFBConfigRec *GLXFBConfigSGIX;
 	typedef XID GLXPbufferSGIX;
-	typedef struct {
-    char    pipeName[80]; /* Should be [GLX_HYPERPIPE_PIPE_NAME_LENGTH_SGIX] */
-    int     networkId;
-} GLXHyperpipeNetworkSGIX;
-	typedef struct {
-    char    pipeName[80]; /* Should be [GLX_HYPERPIPE_PIPE_NAME_LENGTH_SGIX] */
-    int     channel;
-    unsigned int participationType;
-    int     timeSlice;
-} GLXHyperpipeConfigSGIX;
-	typedef struct {
-    char pipeName[80]; /* Should be [GLX_HYPERPIPE_PIPE_NAME_LENGTH_SGIX] */
-    int srcXOrigin, srcYOrigin, srcWidth, srcHeight;
-    int destXOrigin, destYOrigin, destWidth, destHeight;
-} GLXPipeRect;
-	typedef struct {
-    char pipeName[80]; /* Should be [GLX_HYPERPIPE_PIPE_NAME_LENGTH_SGIX] */
-    int XOrigin, YOrigin, maxHeight, maxWidth;
-} GLXPipeRectLimits;
+// 	typedef struct {
+//     char    pipeName[80]; /* Should be [GLX_HYPERPIPE_PIPE_NAME_LENGTH_SGIX] */
+//     int     networkId;
+// } GLXHyperpipeNetworkSGIX;
+// 	typedef struct {
+//     char    pipeName[80]; /* Should be [GLX_HYPERPIPE_PIPE_NAME_LENGTH_SGIX] */
+//     int     channel;
+//     unsigned int participationType;
+//     int     timeSlice;
+// } GLXHyperpipeConfigSGIX;
+// 	typedef struct {
+//     char pipeName[80]; /* Should be [GLX_HYPERPIPE_PIPE_NAME_LENGTH_SGIX] */
+//     int srcXOrigin, srcYOrigin, srcWidth, srcHeight;
+//     int destXOrigin, destYOrigin, destWidth, destHeight;
+// } GLXPipeRect;
+// 	typedef struct {
+//     char pipeName[80]; /* Should be [GLX_HYPERPIPE_PIPE_NAME_LENGTH_SGIX] */
+//     int XOrigin, YOrigin, maxHeight, maxWidth;
+// } GLXPipeRectLimits;
 	#endif /*GLXWIN_GEN_TYPE_H*/
