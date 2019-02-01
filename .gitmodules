@@ -8,3 +8,6 @@
 	path = include/boost
 	url = git://github.com/cinder/Cinder-Boost.git
 	branch = boost_1_60
+[submodule "blocks/ImgGui"]
+	path = blocks/ImgGui
+	url = git@github.com:nickblock/Cinder-ImGui.git
