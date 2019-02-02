@@ -149,7 +149,7 @@ void MotionImplAndroid::setShowsCalibrationView( bool shouldShow )
 
 ci::vec3 MotionImplAndroid::getGravityDirection( app::InterfaceOrientation orientation ) const
 {
-	return ci::vec3();
+	return mGravity;
 }
 
 ci::quat MotionImplAndroid::getRotation( app::InterfaceOrientation orientation ) const
