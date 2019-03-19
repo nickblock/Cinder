@@ -26,19 +26,19 @@
 #include "cinder/Filesystem.h"
 #include "cinder/Surface.h"
 
-int stoi( const std::string& str );
+//int stoi( const std::string& str );
 
 namespace std {
-
-std::string to_string( int value );
-std::string to_string( long value );
-std::string to_string( long long value );
-std::string to_string( unsigned value );
-std::string to_string( unsigned long value );
-std::string to_string( unsigned long long value );
-std::string to_string( float value );
-std::string to_string( double value );
-std::string to_string( long double value );
+//
+//std::string to_string( int value );
+//std::string to_string( long value );
+//std::string to_string( long long value );
+//std::string to_string( unsigned value );
+//std::string to_string( unsigned long value );
+//std::string to_string( unsigned long long value );
+//std::string to_string( float value );
+//std::string to_string( double value );
+//std::string to_string( long double value );
 
 } // namespace std
 

@@ -40,11 +40,11 @@ using namespace ci::android;
 #define LOGE(...) ((void)__android_log_print(ANDROID_LOG_ERROR,"cinder", __VA_ARGS__))
 
 // Extension
-enum {
-	ASENSOR_TYPE_GRAVITY 				= 9,
-	ASENSOR_TYPE_ROTATION_VECTOR		= 11,
-	ASENSOR_TYPE_GAME_ROTATION_VECTOR	= 15 
-};
+//enum {
+//	ASENSOR_TYPE_GRAVITY 				= 9,
+//	ASENSOR_TYPE_ROTATION_VECTOR		= 11,
+//	ASENSOR_TYPE_GAME_ROTATION_VECTOR	= 15
+//};
 
 namespace cinder { namespace app { 
 

@@ -29,6 +29,8 @@
 
 #if defined( CINDER_UWP ) || ( defined( _MSC_VER ) && ( _MSC_VER >= 1900 ) )
 	#include <filesystem>
+#elif __cplusplus >= 201402L
+  #include <experimental/filesystem>
 #else
 	#define BOOST_FILESYSTEM_VERSION 3
 	#define BOOST_FILESYSTEM_NO_DEPRECATED
@@ -39,6 +41,8 @@ namespace cinder {
 #if defined( CINDER_UWP ) || ( defined( _MSC_VER ) && ( _MSC_VER >= 1900 ) )
 	namespace fs = std::tr2::sys;
 } // namespace cinder
+#elif __cplusplus >= 201402L
+  namespace fs = std::experimental::filesystem;
 #else
 	namespace fs = boost::filesystem;
 } // namespace cinder
